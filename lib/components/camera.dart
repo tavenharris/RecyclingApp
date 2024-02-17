@@ -22,8 +22,12 @@ class _CameraWidgetState extends State<CameraWidget> {
   }
 
   void _initializeCamera() async {
-    _controller = CameraController(widget.cameras.first, ResolutionPreset.max);
-    _initializeControllerFuture = _controller.initialize();
+    if (widget.cameras.isNotEmpty) {
+      _controller = CameraController(widget.cameras.first, ResolutionPreset.max);
+      _initializeControllerFuture = _controller.initialize();
+    } else {
+      _initializeControllerFuture = Future.error('No available cameras');
+    }
     setState(() {});
   }
 
@@ -39,7 +43,11 @@ class _CameraWidgetState extends State<CameraWidget> {
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done && _controller.value.isInitialized) {
+          if (snapshot.hasError) {
+            // If there's an error, display a relevant message
+            return Center(child: Text('Error: ${snapshot.error}\nNo available cameras'));
+          } else if (snapshot.connectionState == ConnectionState.done &&
+              _controller.value.isInitialized) {
             // Ensure the CameraPreview is fullscreen by using SizedBox.expand
             return SizedBox.expand(
               child: CameraPreview(_controller),
