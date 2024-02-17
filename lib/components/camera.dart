@@ -1,70 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' show join;
 
-// A widget that displays the camera's preview.
 class CameraWidget extends StatefulWidget {
+  final List<CameraDescription> cameras;
+
+  const CameraWidget({Key? key, required this.cameras}) : super(key: key);
+
   @override
   _CameraWidgetState createState() => _CameraWidgetState();
 }
 
 class _CameraWidgetState extends State<CameraWidget> {
-  CameraController? controller;
-  List<CameraDescription>? cameras;
+  late CameraController _controller;
+  late Future<void> _initializeControllerFuture;
+  String? imagePath;
 
   @override
   void initState() {
     super.initState();
-    initCamera();
+    _initializeCamera();
   }
 
-  Future<void> initCamera() async {
-    cameras = await availableCameras();
-    controller = CameraController(cameras![0], ResolutionPreset.max);
-    controller!.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    });
+  void _initializeCamera() async {
+    _controller = CameraController(widget.cameras.first, ResolutionPreset.max);
+    _initializeControllerFuture = _controller.initialize();
+    setState(() {});
   }
 
   @override
   void dispose() {
-    controller?.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (controller == null || !controller!.value.isInitialized) {
-      return Container();
-    }
     return Scaffold(
-      appBar: AppBar(title: Text('Take a Photo')),
-      body: CameraPreview(controller!),
+      body: FutureBuilder<void>(
+        future: _initializeControllerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done && _controller.value.isInitialized) {
+            // Ensure the CameraPreview is fullscreen by using SizedBox.expand
+            return SizedBox.expand(
+              child: CameraPreview(_controller),
+            );
+          } else {
+            // Show loading spinner until the camera is initialized
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera),
         onPressed: () async {
           try {
-            await controller!.initialize();
-            final image = await controller!.takePicture();
-            await _showSnackBarWithPhoto(context, image);
+            // Ensure that the camera is initialized before taking a picture
+            await _initializeControllerFuture;
+            final XFile photo = await _controller.takePicture();
+            // Update imagePath with the path where the photo was stored
+            setState(() {
+              imagePath = photo.path;
+            });
+            // Show a SnackBar with a clickable action
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Photo taken!'),
+                action: SnackBarAction(
+                  label: 'View',
+                  onPressed: () {
+                    // Handle action press here (e.g., navigate to the photo)
+                    // For simplicity, we're just printing the path
+                    print(imagePath);
+                  },
+                ),
+              ),
+            );
           } catch (e) {
-            print(e); // Handle the error
+            print("Error taking picture: $e");
           }
         },
       ),
     );
-  }
-
-  Future<void> _showSnackBarWithPhoto(BuildContext context, XFile photo) async {
-    final snackBar = SnackBar(content: Text('Photo taken!'));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    // Optionally, save the photo to the file system
-    final directory = await getApplicationDocumentsDirectory();
-    final imagePath = join(directory.path, '${DateTime.now()}.png');
-    await photo.saveTo(imagePath);
   }
 }
