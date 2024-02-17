@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:untitled1/Components/BottomSheet.dart';
 
 class CameraWidget extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -61,6 +62,12 @@ class _CameraWidgetState extends State<CameraWidget> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera),
         onPressed: () async {
+          showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) {
+                return BottomWidget();
+              }
+          );
           try {
             // Ensure that the camera is initialized before taking a picture
             await _initializeControllerFuture;
@@ -88,6 +95,7 @@ class _CameraWidgetState extends State<CameraWidget> {
           }
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
