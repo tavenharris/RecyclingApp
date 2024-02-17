@@ -24,12 +24,28 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: DevicePreview.appBuilder,
-      home: Scaffold(
-        body: Column(
-          children: [
-            Expanded(child: CameraWidget(cameras: cameras)), // Pass the list of cameras to CameraWidget
-            BottomWidget(),
-          ],
+      home: DevicePreview(
+        enabled: false,
+        builder: (context) => Scaffold(
+          body: Column(
+            children: [
+              Expanded(
+                  child: GestureDetector(
+                    onVerticalDragUpdate: (DragUpdateDetails details) {
+                      if (details.delta.dy < -7) // if swipe up
+                          {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return BottomWidget();
+                          },
+                        );
+                      }
+                    },
+                    child: CameraWidget(cameras: cameras), // Pass the list of cameras to CameraWidget
+                  )),
+            ],
+          ),
         ),
       ),
     );

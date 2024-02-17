@@ -1,34 +1,18 @@
 import 'package:flutter/material.dart';
 
-// void main() {
-//   runApp(MaterialApp(
-//     home: BottomWidget(),
-//   ));
-// }
+
 
 class BottomWidget extends StatelessWidget {
+  const BottomWidget({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        child: const Text('Modal Bottom Sheet'),
-        onPressed: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return SizedBox(
-                  height: 400,
-                  child: Center(
-                    child: ElevatedButton(
-                      child: const Text('Close'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                );
-              });
-        },
+    return Container(
+      height: 500.0,
+      color: Colors.white,
+      child: Center(
+        child: Text('I\'m a bottom widget',
+            style: TextStyle(color: Colors.black, fontSize: 30)),
       ),
     );
   }

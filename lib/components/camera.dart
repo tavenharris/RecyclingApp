@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
 import 'package:untitled1/Components/BottomSheet.dart';
 
 class CameraWidget extends StatefulWidget {
@@ -24,7 +24,8 @@ class _CameraWidgetState extends State<CameraWidget> {
 
   void _initializeCamera() async {
     if (widget.cameras.isNotEmpty) {
-      _controller = CameraController(widget.cameras.first, ResolutionPreset.max);
+      _controller =
+          CameraController(widget.cameras.first, ResolutionPreset.max);
       _initializeControllerFuture = _controller.initialize();
     } else {
       _initializeControllerFuture = Future.error('No available cameras');
@@ -46,7 +47,8 @@ class _CameraWidgetState extends State<CameraWidget> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             // If there's an error, display a relevant message
-            return Center(child: Text('Error: ${snapshot.error}\nNo available cameras'));
+            return Center(
+                child: Text('Error: ${snapshot.error}\nNo available cameras'));
           } else if (snapshot.connectionState == ConnectionState.done &&
               _controller.value.isInitialized) {
             // Ensure the CameraPreview is fullscreen by using SizedBox.expand
@@ -60,13 +62,14 @@ class _CameraWidgetState extends State<CameraWidget> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera),
+        child: Icon(Icons.camera_alt, color: Colors.white),
+        backgroundColor: Colors.green,
         onPressed: () async {
           showModalBottomSheet(
               context: context,
               builder: (BuildContext context) {
                 return BottomWidget();
-              }
+              },
           );
           try {
             // Ensure that the camera is initialized before taking a picture
@@ -76,6 +79,7 @@ class _CameraWidgetState extends State<CameraWidget> {
             setState(() {
               imagePath = photo.path;
             });
+
             // Show a SnackBar with a clickable action
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -90,6 +94,9 @@ class _CameraWidgetState extends State<CameraWidget> {
                 ),
               ),
             );
+
+            // Show the bottom sheet after taking the photo
+
           } catch (e) {
             print("Error taking picture: $e");
           }
