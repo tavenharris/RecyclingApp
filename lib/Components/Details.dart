@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled1/global_variables.dart'; // Import GlobalVariables to access the storedImageBytes
 
 class SecondPage extends StatelessWidget {
   const SecondPage({Key? key}) : super(key: key);
@@ -19,11 +20,16 @@ class SecondPage extends StatelessWidget {
           ),
         ),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text('This is the second page...'),
+            if (GlobalVariables.storedImageBytes != null)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.memory(GlobalVariables.storedImageBytes!),
+              ),
           ],
         ),
       ),
