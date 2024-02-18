@@ -37,10 +37,13 @@ app.get('/get', async (req, res) => {
     try {
         const trashBins = await collection.find({}).toArray();
         res.status(200).json(trashBins);
+        
     } catch (error) {
         res.status(500).json({ message: 'Failed to get trash bins', error });
     }
+    
 });
+
 
 // Add a new trash bin location
 app.post('/post', async (req, res) => {
