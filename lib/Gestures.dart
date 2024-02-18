@@ -1,6 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
+import 'Components/AddTrash.dart';
 import 'Components/BottomSheet.dart';
 import 'Components/camera.dart';
 import 'Components/map.dart'; // Import map.dart
