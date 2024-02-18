@@ -10,7 +10,7 @@ class TrashMap extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Trash Map'),
+        title: const Text('Trash-Cans Nearby'),
       ),
       body: GoogleMapWidget(),
     );
@@ -98,7 +98,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
     return Stack(
       children: [
         GoogleMap(
-          initialCameraPosition: CameraPosition(
+          initialCameraPosition: const CameraPosition(
             target: LatLng(37.3488, -121.9382),
             zoom: 15.0,
           ),
@@ -107,7 +107,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
           myLocationEnabled: true, // Enable the my location button
           myLocationButtonEnabled: false, // Hide the default my location button
         ),
-        Positioned(
+        const Positioned(
           bottom: 16,
           left: 16,
           child: AddTrash(), // Use AddTrash instead of AddTrashButton
