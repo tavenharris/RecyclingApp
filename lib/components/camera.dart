@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
 
+import 'BottomSheet.dart';
+
 class CameraWidget extends StatefulWidget {
   final List<CameraDescription> cameras;
 
@@ -67,22 +69,36 @@ class _CameraWidgetState extends State<CameraWidget> {
           } else if (snapshot.connectionState == ConnectionState.done && _controller.value.isInitialized) {
             return SizedBox.expand(child: CameraPreview(_controller));
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
-        onPressed: () async {
-          try {
-            await _initializeControllerFuture;
-            final XFile photo = await _controller.takePicture();
-            Uint8List imageBytes = await photo.readAsBytes();
-            sendImageToServer(imageBytes);
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error taking picture: $e')));
-          }
-        },
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: SizedBox(
+          height: 80.0, // Define your height
+          width: 80.0, // Define your width
+          child: FloatingActionButton(
+            child: const Icon(Icons.camera_alt, size: 35.0, color: Colors.black),
+            backgroundColor: Colors.white,
+            onPressed: () async {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return BottomWidget();
+                },
+              );
+              try {
+                await _initializeControllerFuture;
+                final XFile photo = await _controller.takePicture();
+                Uint8List imageBytes = await photo.readAsBytes();
+                sendImageToServer(imageBytes);
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error taking picture: $e')));
+              }
+            },
+          ),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
