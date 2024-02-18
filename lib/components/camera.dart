@@ -1,4 +1,4 @@
-// CameraWidget.dart
+// camera.dart
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -71,28 +71,36 @@ class _CameraWidgetState extends State<CameraWidget> {
     }
   }
 
+  // Check if controller is initialized before dispose
   @override
   void dispose() {
-    _controller.dispose();
+    if (_controller != null && _controller.value.isInitialized) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-                child: Text('Error: ${snapshot.error}\nNo available cameras'));
-          } else if (snapshot.connectionState == ConnectionState.done &&
-              _controller.value.isInitialized) {
-            return SizedBox.expand(child: CameraPreview(_controller));
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+      // Explicitly specify the size of the CameraPreview.
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: FutureBuilder<void>(
+          future: _initializeControllerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                _controller.value.isInitialized) {
+              return CameraPreview(_controller);
+            } else if (snapshot.hasError) {
+              return Center(
+                  child: Text('Error: ${snapshot.error}\nNo available cameras'));
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 0.0),
@@ -113,7 +121,7 @@ class _CameraWidgetState extends State<CameraWidget> {
               }
             },
             child:
-                const Icon(Icons.camera_alt, size: 35.0, color: Colors.black),
+            const Icon(Icons.camera_alt, size: 35.0, color: Colors.black),
           ),
         ),
       ),
