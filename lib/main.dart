@@ -1,14 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:camera/camera.dart'; // Import the camera package
-import 'Components/camera.dart'; // Adjust the path as needed
-import 'Components/BottomSheet.dart'; // Adjust the path as needed
 import 'package:device_preview/device_preview.dart';
+import 'package:flutter/material.dart';
 
 import 'Gestures.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  List<CameraDescription> cameras = await availableCameras(); // Obtain the list of cameras
+  List<CameraDescription> cameras =
+      await availableCameras(); // Obtain the list of cameras
   runApp(
     DevicePreview(
       enabled: false,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Pages/Details.dart';
+
 class BottomWidget extends StatelessWidget {
   const BottomWidget({Key? key}) : super(key: key);
 
@@ -54,7 +56,7 @@ class BottomWidget extends StatelessWidget {
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
-              padding: EdgeInsets.only(bottom: 10, right: 10),
+              padding: EdgeInsets.only(bottom: 0, right: 20),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white, backgroundColor: Colors.green, // This is the text color
@@ -63,7 +65,7 @@ class BottomWidget extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SecondPage(),
+                      builder: (context) => const SecondPage(),
                     ),
                   );
                 },
@@ -72,38 +74,6 @@ class BottomWidget extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-
-class SecondPage extends StatelessWidget {
-  const SecondPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context, false),
-        ),
-        title: const Text(
-          'Scan Information',
-          style: TextStyle(
-            fontSize: 30.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('This is the second page...'),
-          ],
-        ),
       ),
     );
   }
