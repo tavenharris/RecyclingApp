@@ -1,6 +1,8 @@
-import 'package:camera/camera.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:untitled1/Components/BottomSheet.dart';
+import 'package:camera/camera.dart';
+import 'package:http/http.dart' as http;
 
 class CameraWidget extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -14,7 +16,7 @@ class CameraWidget extends StatefulWidget {
 class _CameraWidgetState extends State<CameraWidget> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
-  String? imagePath;
+  final String flaskEndpoint = 'http://127.0.0.1:5000/predict';
 
   @override
   void initState() {
@@ -24,13 +26,28 @@ class _CameraWidgetState extends State<CameraWidget> {
 
   void _initializeCamera() async {
     if (widget.cameras.isNotEmpty) {
-      _controller =
-          CameraController(widget.cameras.first, ResolutionPreset.max);
+      _controller = CameraController(widget.cameras.first, ResolutionPreset.max);
       _initializeControllerFuture = _controller.initialize();
     } else {
       _initializeControllerFuture = Future.error('No available cameras');
     }
     setState(() {});
+  }
+
+  Future<void> sendImageToServer(Uint8List imageBytes) async {
+    var request = http.MultipartRequest('POST', Uri.parse(flaskEndpoint))
+      ..files.add(http.MultipartFile.fromBytes('image', imageBytes, filename: 'uploaded_image.jpg'));
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      response.stream.transform(utf8.decoder).listen((value) {
+        final snackBar = SnackBar(content: Text('Server Response: $value'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      });
+    } else {
+      final snackBar = SnackBar(content: Text('Server error'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override
@@ -46,59 +63,24 @@ class _CameraWidgetState extends State<CameraWidget> {
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            // If there's an error, display a relevant message
-            return Center(
-                child: Text('Error: ${snapshot.error}\nNo available cameras'));
-          } else if (snapshot.connectionState == ConnectionState.done &&
-              _controller.value.isInitialized) {
-            // Ensure the CameraPreview is fullscreen by using SizedBox.expand
-            return SizedBox.expand(
-              child: CameraPreview(_controller),
-            );
+            return Center(child: Text('Error: ${snapshot.error}\nNo available cameras'));
+          } else if (snapshot.connectionState == ConnectionState.done && _controller.value.isInitialized) {
+            return SizedBox.expand(child: CameraPreview(_controller));
           } else {
-            // Show loading spinner until the camera is initialized
             return Center(child: CircularProgressIndicator());
           }
         },
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt, color: Colors.white),
-        backgroundColor: Colors.green,
+        child: Icon(Icons.camera_alt),
         onPressed: () async {
-          showModalBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return BottomWidget();
-              },
-          );
           try {
-            // Ensure that the camera is initialized before taking a picture
             await _initializeControllerFuture;
             final XFile photo = await _controller.takePicture();
-            // Update imagePath with the path where the photo was stored
-            setState(() {
-              imagePath = photo.path;
-            });
-
-            // Show a SnackBar with a clickable action
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Photo taken!'),
-                action: SnackBarAction(
-                  label: 'View',
-                  onPressed: () {
-                    // Handle action press here (e.g., navigate to the photo)
-                    // For simplicity, we're just printing the path
-                    print(imagePath);
-                  },
-                ),
-              ),
-            );
-
-            // Show the bottom sheet after taking the photo
-
+            Uint8List imageBytes = await photo.readAsBytes();
+            sendImageToServer(imageBytes);
           } catch (e) {
-            print("Error taking picture: $e");
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error taking picture: $e')));
           }
         },
       ),
