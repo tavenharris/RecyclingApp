@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart'; // Import the location package
 import 'AddTrash.dart';
 
 class TrashMap extends StatelessWidget {
@@ -22,13 +23,36 @@ class GoogleMapWidget extends StatefulWidget {
 }
 
 class _GoogleMapWidgetState extends State<GoogleMapWidget> {
+  late GoogleMapController _mapController;
   late Set<Marker> _markers;
+  LocationData? _currentLocation;
+  Location location = Location();
 
   @override
   void initState() {
     super.initState();
     _markers = {};
+    _getCurrentLocation();
     _loadTrashBins();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      _currentLocation = await location.getLocation();
+      if (_currentLocation != null) {
+        setState(() {
+          _markers.add(
+            Marker(
+              markerId: MarkerId('currentLocation'),
+              position: LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
+            ),
+          );
+        });
+        _moveCameraToLocation(LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!));
+      }
+    } catch (e) {
+      print('Failed to get current location: $e');
+    }
   }
 
   Future<void> _loadTrashBins() async {
@@ -46,13 +70,14 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
         }).toList();
 
         setState(() {
-          _markers.clear();
-          trashBins.forEach((bin) {
-            _markers.add(Marker(
-              markerId: MarkerId(bin.name),
-              position: LatLng(bin.latitude, bin.longitude),
-            ));
-          });
+          _markers.addAll(
+            trashBins.map(
+              (bin) => Marker(
+                markerId: MarkerId(bin.name),
+                position: LatLng(bin.latitude, bin.longitude),
+              ),
+            ),
+          );
         });
       } else {
         print('Failed to load trash bins: ${response.statusCode}');
@@ -60,6 +85,12 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
     } catch (e) {
       print('Failed to load trash bins: $e');
     }
+  }
+
+  void _moveCameraToLocation(LatLng location) {
+    _mapController.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(target: location, zoom: 15),
+    ));
   }
 
   @override
@@ -72,6 +103,9 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
             zoom: 15.0,
           ),
           markers: _markers,
+          onMapCreated: (controller) => _mapController = controller,
+          myLocationEnabled: true, // Enable the my location button
+          myLocationButtonEnabled: false, // Hide the default my location button
         ),
         Positioned(
           bottom: 16,
