@@ -1,56 +1,89 @@
-import 'dart:async';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-
+// map.dart
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'AddTrash.dart';
 
-class MapScreen extends StatefulWidget {
-  @override
-  _MapScreenState createState() => _MapScreenState();
-}
-
-class _MapScreenState extends State<MapScreen> {
-  late BitmapDescriptor customMarker;
-
-  @override
-  void initState() {
-    super.initState();
-    setCustomMarker();
-  }
-
-  Future<void> setCustomMarker() async {
-    final Uint8List markerIcon = await getBytesFromAsset('assets/custom_marker.png', 100);
-    customMarker = BitmapDescriptor.fromBytes(markerIcon);
-  }
-
-  Future<Uint8List> getBytesFromAsset(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
-  }
-
+class TrashMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Map'),
+        title: Text('Trash Map'),
       ),
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: LatLng(37.7749, -122.4194),
-          zoom: 12,
-        ),
-        markers: {
-          Marker(
-            markerId: MarkerId('customMarker'),
-            position: LatLng(37.7749, -122.4194),
-            icon: customMarker,
-          ),
-        },
-      ),
+      body: GoogleMapWidget(),
     );
   }
+}
+
+class GoogleMapWidget extends StatefulWidget {
+  @override
+  _GoogleMapWidgetState createState() => _GoogleMapWidgetState();
+}
+
+class _GoogleMapWidgetState extends State<GoogleMapWidget> {
+  late Set<Marker> _markers;
+
+  @override
+  void initState() {
+    super.initState();
+    _markers = {};
+    _loadTrashBins();
+  }
+
+  Future<void> _loadTrashBins() async {
+    try {
+      String jsonData = await rootBundle.loadString('assets/poi_data.json');
+      Map<String, dynamic> jsonMap = json.decode(jsonData);
+      List<dynamic> dataArray = jsonMap['data'];
+      List<TrashBin> trashBins = dataArray.map((dataEntry) {
+        final entryDetails = dataEntry.last as List;
+        final name = dataEntry[8] as String;
+        final latitude = double.tryParse(entryDetails[1]) ?? 0.0;
+        final longitude = double.tryParse(entryDetails[2]) ?? 0.0;
+        return TrashBin(name: name, latitude: latitude, longitude: longitude);
+      }).toList();
+
+      setState(() {
+        _markers.clear();
+        trashBins.forEach((bin) {
+          _markers.add(Marker(
+            markerId: MarkerId(bin.name),
+            position: LatLng(bin.latitude, bin.longitude),
+          ));
+        });
+      });
+    } catch (e) {
+      print('Failed to load trash bins: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(37.3488, -121.9382),
+            zoom: 15.0,
+          ),
+          markers: _markers,
+        ),
+        Positioned(
+          bottom: 16,
+          left: 16,
+          child: AddTrash(), // Use AddTrash instead of AddTrashButton
+        ),
+      ],
+    );
+  }
+}
+
+class TrashBin {
+  final String name;
+  final double latitude;
+  final double longitude;
+
+  TrashBin({required this.name, required this.latitude, required this.longitude});
 }
