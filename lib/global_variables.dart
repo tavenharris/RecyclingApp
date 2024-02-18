@@ -1,3 +1,5 @@
+import 'modules/cnn_response.dart';
+
 class GlobalVariables {
-  static String serverResponse = ''; // Initialize with an empty string
+  static ServerResponse? serverResponse; // Update the type to ServerResponse
 }

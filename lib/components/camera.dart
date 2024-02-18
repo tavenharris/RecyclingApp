@@ -1,5 +1,5 @@
 // CameraWidget.dart
-
+import '../modules/cnn_response.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class _CameraWidgetState extends State<CameraWidget> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   final String flaskEndpoint = 'http://127.0.0.1:5000/predict';
-  late String _serverResponse; // Add this line
+  ServerResponse? _serverResponse; // Updated type
 
   @override
   void initState() {
@@ -46,14 +46,17 @@ class _CameraWidgetState extends State<CameraWidget> {
 
     if (response.statusCode == 200) {
       response.stream.transform(utf8.decoder).listen((value) {
-        setState(() { // Update the state with server response
-          _serverResponse = value;
-          GlobalVariables.serverResponse = value;
+        final parsedJson = json.decode(value);
+        final serverResponse = ServerResponse.fromJson(parsedJson);
+        
+        setState(() {
+          _serverResponse = serverResponse;
+          GlobalVariables.serverResponse = serverResponse;
         });
         showModalBottomSheet(
           context: context,
           builder: (BuildContext context) {
-            return BottomWidget(); // Pass the server response
+            return BottomWidget();
           },
         );
       });

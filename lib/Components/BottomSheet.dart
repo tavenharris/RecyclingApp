@@ -7,11 +7,20 @@ class BottomWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String title = 'Scan Some Trash'; // Default title
+
+    // Check prediction value and update title accordingly
+    if (GlobalVariables.serverResponse?.prediction == 'R') {
+      title = 'Recyclable';
+    } else if (GlobalVariables.serverResponse?.prediction == 'O') {
+      title = 'Compostable';
+    }
+
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 300.0, // Increased height to 300.0
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color.fromARGB(255, 35, 212, 68),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(15.0),
           topRight: Radius.circular(15.0),
@@ -26,7 +35,7 @@ class BottomWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Recyclable',
+                  title, // Use the dynamically determined title
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 30,
@@ -36,7 +45,7 @@ class BottomWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Text(
-                    GlobalVariables.serverResponse,
+                    'Prediction: ${GlobalVariables.serverResponse?.prediction}\nAccuracy: ${GlobalVariables.serverResponse?.accuracy}',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
@@ -53,8 +62,8 @@ class BottomWidget extends StatelessWidget {
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.white,
                 ),
                 onPressed: () {
                   try {
