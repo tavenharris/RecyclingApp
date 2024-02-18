@@ -8,12 +8,15 @@ class BottomWidget extends StatelessWidget {
   final Color defaultBackgroundColor = Colors.white;
   final Color greenBackgroundColor = const Color.fromARGB(255, 32, 233, 39);
   final Color blueBackgroundColor = Colors.blue;
+  final Color blackBackgroundColor = Colors.black;
 
   Color getBackgroundColor(String? prediction) {
     if (prediction == 'R') {
       return blueBackgroundColor;
     } else if (prediction == 'O') {
       return greenBackgroundColor;
+    } else if (prediction == 'T'){
+      return blackBackgroundColor;
     }
     return defaultBackgroundColor;
   }
@@ -21,11 +24,21 @@ class BottomWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String title = 'Scan Some Trash';
+    String bodyText = 'Accuracy: ${GlobalVariables.serverResponse?.accuracy != null ? (GlobalVariables.serverResponse!.accuracy * 100).toStringAsFixed(2) + '%' : 'N/A'}';
+    Color titleColor = Colors.black;
+    Color dividerColor = Colors.black;
+    Color bodyTextColor = Colors.black;
 
     if (GlobalVariables.serverResponse?.prediction == 'R') {
       title = 'Recyclable';
     } else if (GlobalVariables.serverResponse?.prediction == 'O') {
       title = 'Compostable';
+    } else if (GlobalVariables.serverResponse?.prediction == 'T') {
+      title = 'Trash';
+      titleColor = Colors.white; // Change title font color to white
+      dividerColor = Colors.white; // Change divider color to white
+      bodyTextColor = Colors.white; // Change body font color to white
+      bodyText = 'Special text for Trash'; // Change body text for 'T' prediction
     }
 
     return Container(
@@ -49,21 +62,21 @@ class BottomWidget extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    color: Colors.black,
+                    color: titleColor, // Use titleColor variable
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Divider(
-                  color: Colors.black,
+                  color: dividerColor, // Use dividerColor variable
                   thickness: 1,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Text(
-                    'Accuracy: ${GlobalVariables.serverResponse?.accuracy != null ? (GlobalVariables.serverResponse!.accuracy * 100).toStringAsFixed(2) + '%' : 'N/A'}',
+                    bodyText,
                     style: TextStyle(
-                      color: Colors.black,
+                      color: bodyTextColor, // Use bodyTextColor variable
                       fontSize: 20,
                     ),
                   ),

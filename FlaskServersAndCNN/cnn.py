@@ -44,9 +44,14 @@ def predict():
 
         # Define labels
         labels = ['O', 'R']  # Assuming index 0 is Cat and index 1 is Dog
-        prediction = labels[preds.item()]
-
-        return jsonify({'prediction': prediction, 'confidence': torch.softmax(outputs, dim=1).max().item()})
-
+        confidence = torch.softmax(outputs, dim=1).max().item()
+        
+        # Check if confidence is below 75 percent
+        if confidence < 0.9:
+            return jsonify({'prediction': 'T', 'confidence': confidence})
+        else:
+            prediction = labels[preds.item()]
+            return jsonify({'prediction': prediction, 'confidence': confidence})
+        
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
