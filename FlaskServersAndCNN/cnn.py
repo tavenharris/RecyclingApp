@@ -47,7 +47,7 @@ def predict():
         confidence = torch.softmax(outputs, dim=1).max().item()
         
         # Check if confidence is below 75 percent
-        if confidence < 0.9:
+        if confidence < 0.95:
             return jsonify({'prediction': 'T', 'confidence': confidence})
         else:
             prediction = labels[preds.item()]

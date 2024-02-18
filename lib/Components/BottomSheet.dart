@@ -34,16 +34,16 @@ class BottomWidget extends StatelessWidget {
     } else if (GlobalVariables.serverResponse?.prediction == 'O') {
       title = 'Compostable';
     } else if (GlobalVariables.serverResponse?.prediction == 'T') {
-      title = 'Trash';
+      title = 'Low Confidence - Trash';
       titleColor = Colors.white; // Change title font color to white
       dividerColor = Colors.white; // Change divider color to white
       bodyTextColor = Colors.white; // Change body font color to white
-      bodyText = 'Special text for Trash'; // Change body text for 'T' prediction
+      bodyText = 'This item is probably trash \nAccuracy: ${GlobalVariables.serverResponse?.accuracy != null ? (GlobalVariables.serverResponse!.accuracy * 100).toStringAsFixed(2) + '%' : 'N/A'}'; // Change body text for 'T' prediction
     }
 
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 200.0,
+      height: 230.0,
       decoration: BoxDecoration(
         color: getBackgroundColor(GlobalVariables.serverResponse?.prediction),
         borderRadius: BorderRadius.only(
