@@ -10,7 +10,7 @@ void main() async {
       await availableCameras(); // Obtain the list of cameras
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: false,
       builder: (context) => MyApp(cameras: cameras),
     ),
   );
