@@ -4,6 +4,8 @@ import 'Components/camera.dart'; // Adjust the path as needed
 import 'Components/BottomSheet.dart'; // Adjust the path as needed
 import 'package:device_preview/device_preview.dart';
 
+import 'Gestures.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   List<CameraDescription> cameras = await availableCameras(); // Obtain the list of cameras
@@ -29,21 +31,7 @@ class MyApp extends StatelessWidget {
         builder: (context) => Scaffold(
           body: Column(
             children: [
-              Expanded(
-                  child: GestureDetector(
-                    onVerticalDragUpdate: (DragUpdateDetails details) {
-                      if (details.delta.dy < -7) // if swipe up
-                          {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return BottomWidget();
-                          },
-                        );
-                      }
-                    },
-                    child: CameraWidget(cameras: cameras), // Pass the list of cameras to CameraWidget
-                  )),
+              Expanded(child: Gestures(cameras: cameras, context: context))
             ],
           ),
         ),
