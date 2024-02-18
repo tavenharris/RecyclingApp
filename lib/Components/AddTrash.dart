@@ -8,20 +8,23 @@ class AddTrash extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AddTrashScreen(
-              onSave: onSave ?? (LatLng position) {
-                print('Saved position: $position');
-              },
+    return Center(
+      child: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(255, 52, 204, 57),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddTrashScreen(
+                onSave: onSave ?? (LatLng position) {
+                  print('Saved position: $position');
+                },
+              ),
             ),
-          ),
-        );
-      },
-      child: Icon(Icons.add),
+          );
+        },
+        child: const Icon(Icons.add, size: 30.0, color: Colors.white),
+      ),
     );
   }
 }
