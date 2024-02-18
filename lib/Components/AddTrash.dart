@@ -21,7 +21,8 @@ class AddTrash extends StatelessWidget {
           ),
         );
       },
-      child: const Icon(Icons.add),
+      child: const Icon(Icons.add, color: Colors.black),
+      backgroundColor: Colors.white,
     );
   }
 }

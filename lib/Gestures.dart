@@ -30,7 +30,7 @@ class Gestures extends StatelessWidget {
           Navigator.push(
             context,
             PageRouteBuilder(
-              transitionDuration: Duration(seconds: 1),
+              transitionDuration: Duration(milliseconds: 200),
               pageBuilder: (context, animation, secondaryAnimation) =>
                   TrashMap(),
               transitionsBuilder:
