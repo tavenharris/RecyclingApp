@@ -16,12 +16,13 @@ class _TrashMapState extends State<TrashMap> {
   LocationData? _currentLocation;
   bool _isLoading = true;
   String _error = '';
+  Location location = Location();
 
   @override
   void initState() {
     super.initState();
-    _determinePosition();
     _loadCustomMarkerIcon();
+    _determinePosition();
   }
 
   void _loadCustomMarkerIcon() async {
@@ -34,7 +35,6 @@ class _TrashMapState extends State<TrashMap> {
   }
 
   Future<void> _determinePosition() async {
-    Location location = Location();
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
 
@@ -62,20 +62,14 @@ class _TrashMapState extends State<TrashMap> {
       }
     }
 
-    try {
-      final LocationData _locationResult = await location.getLocation();
+    location.onLocationChanged.listen((LocationData currentLocation) {
       setState(() {
-        _currentLocation = _locationResult;
+        _currentLocation = currentLocation;
         _isLoading = false;
       });
-      _updateCameraPosition(_locationResult);
-      _addCurrentLocationMarker(_locationResult);
-    } catch (e) {
-      setState(() {
-        _error = 'Failed to get current location: $e';
-        _isLoading = false;
-      });
-    }
+      _updateCameraPosition(currentLocation);
+      _addCurrentLocationMarker(currentLocation);
+    });
   }
 
   void _updateCameraPosition(LocationData locationData) {
