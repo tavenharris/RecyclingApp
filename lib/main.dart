@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart'; // Import the camera package
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-
+import 'Components/map.dart'; // Make sure this path is correct for your map widget
 import 'Gestures.dart';
 
 void main() async {
@@ -24,13 +24,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      builder: DevicePreview.appBuilder,
+      builder: DevicePreview.appBuilder, // Use this only if you're using DevicePreview in your app
       home: DevicePreview(
-        enabled: false,
+        enabled: false, // Use this only if you're using DevicePreview in your app
         builder: (context) => Scaffold(
           body: Column(
             children: [
-              Expanded(child: Gestures(cameras: cameras, context: context))
+              Expanded(
+                // This widget is for your gestures
+                child: Gestures(cameras: cameras, context: context),
+              ),
+              /*Expanded(
+                // This widget is for your map
+                // Make sure MapSample is the correct name of your map widget
+                //child: TrashMap(), 
+              ), */
             ],
           ),
         ),
