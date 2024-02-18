@@ -9,7 +9,7 @@ class BottomWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 250.0,
+      height: 200.0,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -18,15 +18,14 @@ class BottomWidget extends StatelessWidget {
         ),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          const Padding(
+            padding: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Recyclable',
                   style: TextStyle(
                     color: Colors.black,
@@ -34,32 +33,28 @@ class BottomWidget extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Text(
+                    'This trash is recyclable.\nThrow your trash in a blue recycle bin!',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
-              ],
+              ]
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(top: 10, left: 20.0),
-            child: Text(
-              'This trash is recyclable.\nThrow your trash in a blue recycle bin!',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 0, right: 20),
+          Expanded(child: Container()),
+          Padding(
+            padding: EdgeInsets.only(bottom: 20, right: 20),
+            child: Align(
+              alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.green, // This is the text color
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
                 ),
                 onPressed: () {
                   Navigator.push(
@@ -69,7 +64,13 @@ class BottomWidget extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text('More information'),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('More information'),
+                    Icon(Icons.arrow_right),
+                  ],
+                ),
               ),
             ),
           ),
