@@ -4,10 +4,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+
+
+
 class TrashMap extends StatefulWidget {
   @override
   _TrashMapState createState() => _TrashMapState();
 }
+
+
+
 
 class _TrashMapState extends State<TrashMap> {
   late GoogleMapController mapController;
@@ -18,12 +24,18 @@ class _TrashMapState extends State<TrashMap> {
   String _error = '';
   Location location = Location();
 
+
+
+
   @override
   void initState() {
     super.initState();
     _loadCustomMarkerIcon();
     _determinePosition();
   }
+
+
+
 
   void _loadCustomMarkerIcon() async {
     customIcon = await BitmapDescriptor.fromAssetImage(
@@ -34,9 +46,15 @@ class _TrashMapState extends State<TrashMap> {
     _loadTrashBins();
   }
 
+
+
+
   Future<void> _determinePosition() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
+
+
+
 
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -50,6 +68,9 @@ class _TrashMapState extends State<TrashMap> {
       }
     }
 
+
+
+
     _permissionGranted = await location.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
@@ -62,6 +83,9 @@ class _TrashMapState extends State<TrashMap> {
       }
     }
 
+
+
+
     location.onLocationChanged.listen((LocationData currentLocation) {
       setState(() {
         _currentLocation = currentLocation;
@@ -71,6 +95,9 @@ class _TrashMapState extends State<TrashMap> {
       _addCurrentLocationMarker(currentLocation);
     });
   }
+
+
+
 
   void _updateCameraPosition(LocationData locationData) {
     mapController.animateCamera(
@@ -83,18 +110,35 @@ class _TrashMapState extends State<TrashMap> {
     );
   }
 
+
+
+
   void _addCurrentLocationMarker(LocationData locationData) {
     final currentLocationMarker = Marker(
       markerId: MarkerId("current_location"),
       position: LatLng(locationData.latitude!, locationData.longitude!),
       infoWindow: InfoWindow(title: 'Your Location'),
-      icon: BitmapDescriptor.defaultMarker, // Optionally use a custom icon
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
     );
+
+
+
+
+
+
+
+
+
+
+
 
     setState(() {
       _markers.add(currentLocationMarker);
     });
   }
+
+
+
 
   Future<void> _loadTrashBins() async {
     try {
@@ -108,6 +152,9 @@ class _TrashMapState extends State<TrashMap> {
         final longitude = double.tryParse(entryDetails[2]) ?? 0.0; // Replace with the correct index for longitude
         return TrashBin(name: name, latitude: latitude, longitude: longitude);
       }).toList();
+
+
+
 
       setState(() {
         _isLoading = false;
@@ -128,6 +175,9 @@ class _TrashMapState extends State<TrashMap> {
       });
     }
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -152,15 +202,39 @@ class _TrashMapState extends State<TrashMap> {
     );
   }
 
+
+
+
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
 }
+
+
+
 
 class TrashBin {
   final String name;
   final double latitude;
   final double longitude;
 
+
+
+
   TrashBin({required this.name, required this.latitude, required this.longitude});
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
