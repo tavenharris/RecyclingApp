@@ -33,12 +33,7 @@ class MyApp extends StatelessWidget {
               Expanded(
                 // This widget is for your gestures
                 child: Gestures(cameras: cameras),
-              ),
-              Expanded(
-                // This widget is for your map
-                // Make sure MapSample is the correct name of your map widget
-                child: TrashMap(), 
-              ), 
+              ),   
             ],
           ),
         ),

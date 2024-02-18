@@ -54,6 +54,10 @@ class BottomWidget extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                Divider(
+                  color: Colors.black,
+                  thickness: 1,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Text(
@@ -76,7 +80,7 @@ class BottomWidget extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.black,
                   backgroundColor: Colors.white,
-                  fixedSize: Size(210, 50), // Adjust the size here
+                  fixedSize: Size(210, 50),
                 ),
                 onPressed: () {
                   try {
@@ -93,7 +97,7 @@ class BottomWidget extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: const <Widget>[
-                    Text('More information', style: TextStyle(fontSize: 17)), // Adjust the font size here
+                    Text('More information', style: TextStyle(fontSize: 17)),
                     Icon(Icons.arrow_right),
                   ],
                 ),
