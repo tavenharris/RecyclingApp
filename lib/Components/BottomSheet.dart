@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled1/global_variables.dart';
-import '../Pages/Details.dart';
+import 'Details.dart';
 
 class BottomWidget extends StatelessWidget {
   const BottomWidget({Key? key}) : super(key: key);
