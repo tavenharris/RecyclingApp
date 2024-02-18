@@ -193,8 +193,8 @@ class _TrashMapState extends State<TrashMap> {
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
                     target: _currentLocation != null
-                        ? LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!)
-                        : LatLng(37.77483, -122.41942), // Default fallback location
+                        ? LatLng(37.34874659105092/*_currentLocation!.latitude!*/, -121.93833732758615/*_currentLocation!.longitude!*/)
+                        : LatLng(37.34874659105092, -121.93833732758615), // Default fallback location
                     zoom: 15.0,
                   ),
                   markers: _markers,
