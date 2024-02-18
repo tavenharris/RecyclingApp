@@ -1,8 +1,7 @@
-// map.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart' as http;
 import 'AddTrash.dart';
 
 class TrashMap extends StatelessWidget {
@@ -34,26 +33,30 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
 
   Future<void> _loadTrashBins() async {
     try {
-      String jsonData = await rootBundle.loadString('assets/poi_data.json');
-      Map<String, dynamic> jsonMap = json.decode(jsonData);
-      List<dynamic> dataArray = jsonMap['data'];
-      List<TrashBin> trashBins = dataArray.map((dataEntry) {
-        final entryDetails = dataEntry.last as List;
-        final name = dataEntry[8] as String;
-        final latitude = double.tryParse(entryDetails[1]) ?? 0.0;
-        final longitude = double.tryParse(entryDetails[2]) ?? 0.0;
-        return TrashBin(name: name, latitude: latitude, longitude: longitude);
-      }).toList();
+      final response = await http.get(Uri.parse('http://localhost:3000/get'));
+      if (response.statusCode == 200) {
+        final List<dynamic> dataArray = json.decode(response.body);
+        final trashBins = dataArray.where((dataEntry) =>
+            dataEntry['latitude'] != null &&
+            dataEntry['longitude'] != null).map((dataEntry) {
+          final name = dataEntry['_id'] ?? 'Unknown';
+          final latitude = dataEntry['latitude'] as double;
+          final longitude = dataEntry['longitude'] as double;
+          return TrashBin(name: name, latitude: latitude, longitude: longitude);
+        }).toList();
 
-      setState(() {
-        _markers.clear();
-        trashBins.forEach((bin) {
-          _markers.add(Marker(
-            markerId: MarkerId(bin.name),
-            position: LatLng(bin.latitude, bin.longitude),
-          ));
+        setState(() {
+          _markers.clear();
+          trashBins.forEach((bin) {
+            _markers.add(Marker(
+              markerId: MarkerId(bin.name),
+              position: LatLng(bin.latitude, bin.longitude),
+            ));
+          });
         });
-      });
+      } else {
+        print('Failed to load trash bins: ${response.statusCode}');
+      }
     } catch (e) {
       print('Failed to load trash bins: $e');
     }
