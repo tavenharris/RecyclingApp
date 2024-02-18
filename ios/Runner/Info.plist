@@ -9,6 +9,10 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show nearby trash bin locations.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to provide real-time updates even when the app is not in use.</string>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>

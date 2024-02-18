@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -64,15 +63,43 @@ class _TrashMapState extends State<TrashMap> {
     }
 
     try {
-      _currentLocation = await location.getLocation();
-      // Location has been determined, trash bins can be loaded now if they depend on the location
-      // _loadTrashBins(); // Uncomment this if trash bins depend on the current location
+      final LocationData _locationResult = await location.getLocation();
+      setState(() {
+        _currentLocation = _locationResult;
+        _isLoading = false;
+      });
+      _updateCameraPosition(_locationResult);
+      _addCurrentLocationMarker(_locationResult);
     } catch (e) {
       setState(() {
         _error = 'Failed to get current location: $e';
         _isLoading = false;
       });
     }
+  }
+
+  void _updateCameraPosition(LocationData locationData) {
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(locationData.latitude!, locationData.longitude!),
+          zoom: 15.0, // Adjust zoom level as needed
+        ),
+      ),
+    );
+  }
+
+  void _addCurrentLocationMarker(LocationData locationData) {
+    final currentLocationMarker = Marker(
+      markerId: MarkerId("current_location"),
+      position: LatLng(locationData.latitude!, locationData.longitude!),
+      infoWindow: InfoWindow(title: 'Your Location'),
+      icon: BitmapDescriptor.defaultMarker, // Optionally use a custom icon
+    );
+
+    setState(() {
+      _markers.add(currentLocationMarker);
+    });
   }
 
   Future<void> _loadTrashBins() async {
