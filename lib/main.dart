@@ -10,7 +10,7 @@ void main() async {
       await availableCameras(); // Obtain the list of cameras
   runApp(
     DevicePreview(
-      enabled: false,
+      enabled: true,
       builder: (context) => MyApp(cameras: cameras),
     ),
   );
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
             children: [
               Expanded(
                 // This widget is for your gestures
-                child: Gestures(cameras: cameras, context: context),
+                child: Gestures(cameras: cameras),
               ),
               /*Expanded(
                 // This widget is for your map

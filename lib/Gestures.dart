@@ -1,15 +1,13 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
+import 'global_variables.dart';
 import 'Components/BottomSheet.dart';
 import 'Components/camera.dart';
 
 class Gestures extends StatelessWidget {
   final List<CameraDescription> cameras;
-  final BuildContext context;
 
-  Gestures({Key? key, required this.cameras, required this.context})
-      : super(key: key);
+  Gestures({Key? key, required this.cameras}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +18,14 @@ class Gestures extends StatelessWidget {
           showModalBottomSheet(
             context: context,
             builder: (BuildContext context) {
-              return BottomWidget();
+              return BottomWidget(); 
             },
           );
         }
       },
       child: CameraWidget(
-          cameras: cameras), // Pass the list of cameras to CameraWidget
+        cameras: cameras,
+      ),
     );
   }
 }

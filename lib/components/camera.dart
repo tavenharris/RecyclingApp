@@ -1,9 +1,11 @@
+// CameraWidget.dart
+
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:untitled1/global_variables.dart';
 import 'BottomSheet.dart';
 
 class CameraWidget extends StatefulWidget {
@@ -19,6 +21,7 @@ class _CameraWidgetState extends State<CameraWidget> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   final String flaskEndpoint = 'http://127.0.0.1:5000/predict';
+  late String _serverResponse; // Add this line
 
   @override
   void initState() {
@@ -43,8 +46,16 @@ class _CameraWidgetState extends State<CameraWidget> {
 
     if (response.statusCode == 200) {
       response.stream.transform(utf8.decoder).listen((value) {
-        final snackBar = SnackBar(content: Text('Server Response: $value'));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        setState(() { // Update the state with server response
+          _serverResponse = value;
+          GlobalVariables.serverResponse = value;
+        });
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return BottomWidget(); // Pass the server response
+          },
+        );
       });
     } else {
       final snackBar = SnackBar(content: Text('Server error'));
@@ -74,7 +85,7 @@ class _CameraWidgetState extends State<CameraWidget> {
         },
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 50.0),
+        padding: const EdgeInsets.only(bottom: 0.0),
         child: SizedBox(
           height: 80.0, // Define your height
           width: 80.0, // Define your width
@@ -82,12 +93,6 @@ class _CameraWidgetState extends State<CameraWidget> {
             child: const Icon(Icons.camera_alt, size: 35.0, color: Colors.black),
             backgroundColor: Colors.white,
             onPressed: () async {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return BottomWidget();
-                },
-              );
               try {
                 await _initializeControllerFuture;
                 final XFile photo = await _controller.takePicture();
