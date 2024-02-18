@@ -1,4 +1,3 @@
-// map.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -51,6 +50,7 @@ class _GoogleMapWidgetState extends State<GoogleMapWidget> {
           _markers.add(Marker(
             markerId: MarkerId(bin.name),
             position: LatLng(bin.latitude, bin.longitude),
+            icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen), // Use green trash icon
           ));
         });
       });

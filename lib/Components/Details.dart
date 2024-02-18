@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:untitled1/global_variables.dart'; // Import your global_variables.dart file
 
 class SecondPage extends StatefulWidget {
   const SecondPage({Key? key}) : super(key: key);
@@ -35,6 +38,17 @@ class _SecondPageState extends State<SecondPage> {
         child: ListView(
           padding: const EdgeInsets.all(8.0),
           children: <Widget>[
+            if (GlobalVariables.imageBytes != null) // Check if image bytes are available
+              Container(
+                height: 200, // Define your desired height
+                width: 200, // Define your desired width
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: MemoryImage(GlobalVariables.imageBytes!), // Use Image.memory with the image bytes
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
             _buildRichText('• On average, Americans throw away about ', '1,200 pounds', ' of organic garbage each year.'),
             _buildRichText('• We only recycle about ', '67.2 million tons', ' of a possible ', '267.8 million tons', ' – less than a quarter of total MSW.'),
             _buildRichText('• The EPA estimates that around ', '75% of all waste', ' is recyclable.'),

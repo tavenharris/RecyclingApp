@@ -56,6 +56,7 @@ class _CameraWidgetState extends State<CameraWidget> {
         setState(() {
           _serverResponse = serverResponse;
           GlobalVariables.serverResponse = serverResponse;
+          GlobalVariables.imageBytes = imageBytes;
         });
         showModalBottomSheet(
           context: context,

@@ -33,7 +33,7 @@ const collection = db.collection('trashAI');
 
 // Routes
 // Get all trash bin locations
-app.get('/trashbins', async (req, res) => {
+app.get('/get', async (req, res) => {
     try {
         const trashBins = await collection.find({}).toArray();
         res.status(200).json(trashBins);
@@ -43,7 +43,7 @@ app.get('/trashbins', async (req, res) => {
 });
 
 // Add a new trash bin location
-app.post('/trashbins', async (req, res) => {
+app.post('/post', async (req, res) => {
     try {
         const { name, latitude, longitude } = req.body;
         const result = await collection.insertOne({ name, latitude, longitude });

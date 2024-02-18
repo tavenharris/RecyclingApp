@@ -24,7 +24,7 @@ class BottomWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String title = 'Scan Some Trash';
-    String bodyText = 'Accuracy: ${GlobalVariables.serverResponse?.accuracy != null ? (GlobalVariables.serverResponse!.accuracy * 100).toStringAsFixed(2) + '%' : 'N/A'}';
+    String bodyText = 'Confidence: ${GlobalVariables.serverResponse?.accuracy != null ? (GlobalVariables.serverResponse!.accuracy * 100).toStringAsFixed(2) + '%' : 'N/A'}';
     Color titleColor = Colors.black;
     Color dividerColor = Colors.black;
     Color bodyTextColor = Colors.black;
@@ -38,7 +38,7 @@ class BottomWidget extends StatelessWidget {
       titleColor = Colors.white; // Change title font color to white
       dividerColor = Colors.white; // Change divider color to white
       bodyTextColor = Colors.white; // Change body font color to white
-      bodyText = 'This item is probably trash \nAccuracy: ${GlobalVariables.serverResponse?.accuracy != null ? (GlobalVariables.serverResponse!.accuracy * 100).toStringAsFixed(2) + '%' : 'N/A'}'; // Change body text for 'T' prediction
+      bodyText = 'This item is probably trash \n Confidence: ${GlobalVariables.serverResponse?.accuracy != null ? (GlobalVariables.serverResponse!.accuracy * 100).toStringAsFixed(2) + '%' : 'N/A'}'; // Change body text for 'T' prediction
     }
 
     return Container(
